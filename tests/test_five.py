@@ -150,7 +150,9 @@ class TestToolcallParse:
         }])
         result = p(raw)
         assert isinstance(result, Ok)
-        assert result.value == "echo hi"
+        # V1 embeds call_id as comment for V2 to extract
+        assert "#call_id:1" in result.value
+        assert "echo hi" in result.value
 
     def test_no_bash_tool(self):
         p = toolcall_parse()
