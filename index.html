@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Глаголица — Транслитератор</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background: #1a1410;
+            color: #d4c5a9;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #e8d5a3;
+            text-align: center;
+            margin-bottom: 0.3rem;
+            letter-spacing: 0.05em;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: #8a7d6b;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-style: italic;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .input-section {
+            background: #2a2218;
+            border: 1px solid #3d3428;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-section label {
+            display: block;
+            font-size: 0.9rem;
+            color: #a89880;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            background: #1a1410;
+            border: 1px solid #3d3428;
+            border-radius: 4px;
+            color: #d4c5a9;
+            font-family: 'Georgia', serif;
+            font-size: 1.2rem;
+            padding: 1rem;
+            resize: vertical;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        textarea:focus {
+            border-color: #6b5d45;
+        }
+
+        textarea::placeholder {
+            color: #5a4f3f;
+        }
+
+        .output-section {
+            background: #2a2218;
+            border: 1px solid #3d3428;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .output-section label {
+            display: block;
+            font-size: 0.9rem;
+            color: #a89880;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .output {
+            width: 100%;
+            min-height: 120px;
+            background: #1a1410;
+            border: 1px solid #3d3428;
+            border-radius: 4px;
+            color: #e8d5a3;
+            font-size: 1.8rem;
+            padding: 1rem;
+            line-height: 2;
+            word-break: break-word;
+        }
+
+        .output:empty::before {
+            content: 'Ⰰ Ⰱ Ⰲ Ⰳ ...';
+            color: #3d3428;
+        }
+
+        .controls {
+            display: flex;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: #3d3428;
+            color: #d4c5a9;
+            border: 1px solid #5a4f3f;
+            border-radius: 4px;
+            padding: 0.6rem 1.2rem;
+            font-family: 'Georgia', serif;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            background: #5a4f3f;
+            border-color: #8a7d6b;
+        }
+
+        button.active {
+            background: #6b5d45;
+            border-color: #a89880;
+            color: #e8d5a3;
+        }
+
+        .reference {
+            background: #2a2218;
+            border: 1px solid #3d3428;
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .reference h2 {
+            font-size: 1.1rem;
+            color: #a89880;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .ref-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 0.5rem;
+        }
+
+        .ref-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0.6rem;
+            background: #1a1410;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        .ref-glag {
+            font-size: 1.4rem;
+            color: #e8d5a3;
+            min-width: 2rem;
+            text-align: center;
+        }
+
+        .ref-cyrillic {
+            color: #d4c5a9;
+        }
+
+        .ref-latin {
+            color: #6b5d45;
+            font-size: 0.75rem;
+        }
+
+        .divider {
+            width: 100%;
+            height: 1px;
+            background: #3d3428;
+            margin: 1.5rem 0;
+        }
+
+        .info {
+            text-align: center;
+            color: #5a4f3f;
+            font-size: 0.8rem;
+            margin-top: 2rem;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Ⰰ Глаголица Ⱋ</h1>
+    <p class="subtitle">Транслитератор · Glagolitic Translator</p>
+
+    <div class="container">
+
+        <div class="input-section">
+            <label>Введите текст / Enter text</label>
+            <textarea id="input" placeholder="Напишите что-нибудь на русском или английском..."></textarea>
+        </div>
+
+        <div class="controls">
+            <button id="btn-ru" class="active" onclick="setMode('ru')">Русский → Глаголица</button>
+            <button id="btn-en" onclick="setMode('en')">English → Glagolitic</button>
+            <button onclick="copyOutput()">📋 Копировать</button>
+            <button onclick="clearAll()">✕ Очистить</button>
+        </div>
+
+        <div class="output-section">
+            <label>Результат / Result</label>
+            <div class="output" id="output"></div>
+        </div>
+
+        <div class="reference">
+            <h2>Справочная таблица / Reference</h2>
+            <div class="ref-grid" id="refGrid"></div>
+        </div>
+
+        <p class="info">Глаголица · IX век · Создана Кириллом и Мефодием</p>
+    </div>
+
+    <script>
+        // === RUSSIAN → GLAGOLITIC MAP ===
+        const ruMap = {
+            // Uppercase
+            'А': 'Ⰰ', 'Б': 'Ⱏ', 'В': 'Ⰱ', 'Г': 'Ⰲ', 'Д': 'Ⰳ',
+            'Е': 'Ⰴ', 'Ё': 'Ⰴ', 'Ж': 'Ⰵ', 'З': 'Ⰶ', 'И': 'Ⰷ',
+            'Й': 'Ⰸ', 'К': 'Ⰹ', 'Л': 'Ⰺ', 'М': 'Ⰻ', 'Н': 'Ⰼ',
+            'О': 'Ⰽ', 'П': 'Ⰾ', 'Р': 'Ⰿ', 'С': 'Ⱀ', 'Т': 'Ⱁ',
+            'У': 'Ⱂ', 'Ф': 'Ⱃ', 'Х': 'Ⱄ', 'Ц': 'Ⱅ', 'Ч': 'Ⱆ',
+            'Ш': 'Ⱇ', 'Щ': 'Ⱈ', 'Ъ': 'Ⱉ', 'Ы': 'Ⰴ', 'Ь': 'Ⱊ',
+            'Э': 'Ⰴ', 'Ю': 'Ⱌ', 'Я': 'Ⱍ',
+            // Lowercase
+            'а': 'Ⱋ', 'б': 'Ⱐ', 'в': 'Ⰰ', 'г': 'Ⰲ', 'д': 'Ⰳ',
+            'е': 'Ⰴ', 'ё': 'Ⰴ', 'ж': 'Ⰵ', 'з': 'Ⰶ', 'и': 'Ⰷ',
+            'й': 'Ⰸ', 'к': 'Ⰹ', 'л': 'Ⰺ', 'м': 'Ⰻ', 'н': 'Ⰼ',
+            'о': 'Ⰽ', 'п': 'Ⰾ', 'р': 'Ⰿ', 'с': 'Ⱀ', 'т': 'Ⱁ',
+            'у': 'Ⱂ', 'ф': 'Ⱃ', 'х': 'Ⱄ', 'ц': 'Ⱅ', 'ч': 'Ⱆ',
+            'ш': 'Ⱇ', 'щ': 'Ⱈ', 'ъ': 'Ⱉ', 'ы': 'Ⰴ', 'ь': 'Ⱊ',
+            'э': 'Ⰴ', 'ю': 'Ⱌ', 'я': 'Ⱍ',
+        };
+
+        // === ENGLISH → GLAGOLIC MAP (phonetic) ===
+        const enMap = {
+            // Uppercase
+            'A': 'Ⰰ', 'B': 'Ⱏ', 'C': 'Ⰹ', 'D': 'Ⰳ', 'E': 'Ⰴ',
+            'F': 'Ⱃ', 'G': 'Ⰲ', 'H': 'Ⱄ', 'I': 'Ⰷ', 'J': 'Ⰸ',
+            'K': 'Ⰹ', 'L': 'Ⰺ', 'M': 'Ⰻ', 'N': 'Ⰼ', 'O': 'Ⰽ',
+            'P': 'Ⰾ', 'Q': 'Ⰹ', 'R': 'Ⰿ', 'S': 'Ⱀ', 'T': 'Ⱁ',
+            'U': 'Ⱂ', 'V': 'Ⰱ', 'W': 'Ⰱ', 'X': 'Ⱄ', 'Y': 'Ⰷ',
+            'Z': 'Ⰶ',
+            // Lowercase
+            'a': 'Ⱋ', 'b': 'Ⱐ', 'c': 'Ⰹ', 'd': 'Ⰳ', 'e': 'Ⰴ',
+            'f': 'Ⱃ', 'g': 'Ⰲ', 'h': 'Ⱄ', 'i': 'Ⰷ', 'j': 'Ⰸ',
+            'k': 'Ⰹ', 'l': 'Ⰺ', 'm': 'Ⰻ', 'n': 'Ⰼ', 'o': 'Ⰽ',
+            'p': 'Ⰾ', 'q': 'Ⰹ', 'r': 'Ⰿ', 's': 'Ⱀ', 't': 'Ⱁ',
+            'u': 'Ⱂ', 'v': 'Ⰰ', 'w': 'Ⰰ', 'x': 'Ⱄ', 'y': 'Ⰷ',
+            'z': 'Ⰶ',
+        };
+
+        // Reference table data
+        const refData = [
+            ['ⰀⰛ', 'А', 'A'], ['ⰟⰠ', 'Б', 'B'], ['ⰁⰀ', 'В', 'V'],
+            ['Ⰲ', 'Г', 'G'], ['Ⰳ', 'Д', 'D'], ['Ⰴ', 'Е/Ё', 'E'],
+            ['Ⰵ', 'Ж', 'Zh'], ['Ⰶ', 'З', 'Z'], ['Ⰷ', 'И', 'I'],
+            ['Ⰸ', 'Й', 'Y'], ['Ⰹ', 'К', 'K'], ['Ⰺ', 'Л', 'L'],
+            ['Ⰻ', 'М', 'M'], ['Ⰼ', 'Н', 'N'], ['Ⰽ', 'О', 'O'],
+            ['Ⰾ', 'П', 'P'], ['Ⰿ', 'Р', 'R'], ['Ⱀ', 'С', 'S'],
+            ['Ⱁ', 'Т', 'T'], ['Ⱂ', 'У', 'U'], ['Ⱃ', 'Ф', 'F'],
+            ['Ⱄ', 'Х', 'H'], ['Ⱅ', 'Ц', 'C'], ['Ⱆ', 'Ч', 'Ch'],
+            ['Ⱇ', 'Ш', 'Sh'], ['Ⱈ', 'Щ', 'Sch'], ['Ⱉ', 'Ъ', "'"],
+            ['Ⱊ', 'Ь', "'"], ['Ⱌ', 'Ю', 'Yu'], ['Ⱍ', 'Я', 'Ya'],
+        ];
+
+        let mode = 'ru';
+
+        function setMode(m) {
+            mode = m;
+            document.getElementById('btn-ru').classList.toggle('active', m === 'ru');
+            document.getElementById('btn-en').classList.toggle('active', m === 'en');
+            translate();
+        }
+
+        function translate() {
+            const input = document.getElementById('input').value;
+            const map = mode === 'ru' ? ruMap : enMap;
+            let result = '';
+
+            for (const char of input) {
+                if (map[char]) {
+                    result += map[char];
+                } else if (char === ' ' || char === '\n' || char === '\t') {
+                    result += char;
+                } else if (char === '.' || char === ',' || char === '!' || char === '?' || char === '-' || char === ':' || char === ';' || char === '"' || char === '(' || char === ')') {
+                    result += char;
+                } else {
+                    result += char; // keep unknown chars as-is
+                }
+            }
+
+            document.getElementById('output').textContent = result;
+        }
+
+        function copyOutput() {
+            const text = document.getElementById('output').textContent;
+            if (text) {
+                navigator.clipboard.writeText(text);
+            }
+        }
+
+        function clearAll() {
+            document.getElementById('input').value = '';
+            document.getElementById('output').textContent = '';
+        }
+
+        // Build reference grid
+        function buildRef() {
+            const grid = document.getElementById('refGrid');
+            for (const [glag, cyrillic, latin] of refData) {
+                const item = document.createElement('div');
+                item.className = 'ref-item';
+                item.innerHTML = `
+                    <span class="ref-glag">${glag}</span>
+                    <span>
+                        <span class="ref-cyrillic">${cyrillic}</span>
+                        <span class="ref-latin"> · ${latin}</span>
+                    </span>
+                `;
+                grid.appendChild(item);
+            }
+        }
+
+        // Live translation
+        document.getElementById('input').addEventListener('input', translate);
+
+        // Init
+        buildRef();
+    </script>
+
+</body>
+</html>
