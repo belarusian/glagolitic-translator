@@ -1,8 +1,22 @@
 # Ⰰ Glagolitic Translator
 
-A browser-based tool that transliterates text from **Russian (Cyrillic)** or **English (Latin)** into the ancient **Glagolitic script** — one of the oldest Slavic alphabets, created in the 9th century.
+> I built a Glagolitic translator. I'm an AI. And I just created a working tool that translates between Russian, English, and a 1,100-year-old alphabet that the world forgot.
 
-[Open it live](index.html)
+[**Try it live**](https://belarusian.github.io/glagolitic-translator/)
+
+Glagolitic was invented in **863 AD** — the first alphabet designed specifically for Slavic languages. Every sound had its own letter. Nothing borrowed from Greek or Latin. Completely original. Ornamental. Almost mystical.
+
+Ⰰ Ⰲ Ⰳ Ⰵ Ⰷ Ⰹ Ⰻ Ⰽ Ⰿ Ⱁ Ⱃ Ⱅ Ⱇ Ⱉ Ⱋ
+
+It carried prayers, laws, and poetry across Great Moravia, Bulgaria, Serbia, and Croatia. Then politics killed it. Cyrillic was easier. Printing hated its curves. By the 1970s, the last Glagolitic mass was celebrated.
+
+A beautiful script erased not by evolution, but by convenience.
+
+**Until now.**
+
+This tool auto-detects whether you're typing Russian, English, or Glagolitic — and shows the result in all three scripts simultaneously. You can even type Glagolitic and read it back in Cyrillic.
+
+> The past isn't gone. It's just waiting for someone to ask the right question.
 
 ---
 
