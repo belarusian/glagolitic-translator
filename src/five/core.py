@@ -56,7 +56,7 @@ def run(
 ) -> Path:
     """Five-function evaluator.
 
-    Loop: G → V1 → [G'] → V2, repeat until V2 exits or max_steps.
+    Loop: (G → V1 → (G' → G)* → V2)*, repeat until V2 exits or max_steps.
 
     G  → query LLM, get raw text
     V1 → extract bash action from text
