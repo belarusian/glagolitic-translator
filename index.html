@@ -270,14 +270,70 @@
             'О': 'Ⰽ', 'П': 'Ⰾ', 'Р': 'Ⰿ', 'С': 'Ⱀ', 'Т': 'Ⱁ',
             'У': 'Ⱂ', 'Ф': 'Ⱃ', 'Х': 'Ⱄ', 'Ц': 'Ⱅ', 'Ч': 'Ⱆ',
             'Ш': 'Ⱇ', 'Щ': 'Ⱈ', 'Ъ': 'Ⱉ', 'Ы': 'Ⰴ', 'Ь': 'Ⱊ',
-            'Э': 'Ⰴ', 'Ю': 'Ⱌ', 'Я': 'Ⱍ',
+            'Э': 'Ⰴ', 'Ю': 'Ⱌ', 'Я': 'Ⱍ', 'Ѣ': 'Ⱎ',
             'а': 'Ⱋ', 'б': 'Ⱐ', 'в': 'Ⰱ', 'г': 'Ⰲ', 'д': 'Ⰳ',
             'е': 'Ⰴ', 'ё': 'Ⰴ', 'ж': 'Ⰵ', 'з': 'Ⰶ', 'и': 'Ⰷ',
             'й': 'Ⰸ', 'к': 'Ⰹ', 'л': 'Ⰺ', 'м': 'Ⰻ', 'н': 'Ⰼ',
             'о': 'Ⰽ', 'п': 'Ⰾ', 'р': 'Ⰿ', 'с': 'Ⱀ', 'т': 'Ⱁ',
             'у': 'Ⱂ', 'ф': 'Ⱃ', 'х': 'Ⱄ', 'ц': 'Ⱅ', 'ч': 'Ⱆ',
             'ш': 'Ⱇ', 'щ': 'Ⱈ', 'ъ': 'Ⱉ', 'ы': 'Ⰴ', 'ь': 'Ⱊ',
-            'э': 'Ⰴ', 'ю': 'Ⱌ', 'я': 'Ⱍ',
+            'э': 'Ⰴ', 'ю': 'Ⱌ', 'я': 'Ⱍ', 'ѣ': 'Ⱎ',
+        };
+
+        // === EXTENDED GLAGOLITIC (U+2C21–U+2C5F) → CYRILLIC ===
+        const extendedGlagToRu = {
+            // U+2C21 Sht
+            'Ⱑ': 'Ѡ',
+            // U+2C30 Yeri / Big Yus pair
+            'ⰰ': 'Ѧ', 'ⰱ': 'Ѩ',
+            // U+2C32–2C35 Yati, Little Yus, Big Yus (no lowercase for these)
+            'ⰲ': 'Ѯ', 'ⰳ': 'Ѱ', 'ⰴ': 'Ѫ', 'ⰵ': 'Ѭ',
+            // U+2C36–2C37 (reserved, skip)
+            // U+2C3B Fita
+            'ⰻ': 'Ѵ',
+            // U+2C3D Izhitsa
+            'ⰽ': 'І',
+            // U+2C3E Tshe
+            'ⰾ': 'Ѕ',
+            // U+2C3F Chervena S
+            'ⰿ': 'Ꙗ',
+            // U+2C40–2C41 Omega, Epsilon
+            'ⱀ': 'Ѡ', 'ⱁ': 'Ѥ',
+            // U+2C42 (reserved)
+            // U+2C43 Semi-Shti
+            'ⱃ': 'Ꙉ',
+            // U+2C44 (reserved)
+            // U+2C45 Ksi
+            'ⱅ': 'Ξ',
+            // U+2C46 Psi
+            'ⱆ': 'Ψ',
+            // U+2C47 (reserved)
+            // U+2C48 Omega (second form)
+            'ⱈ': 'Ω',
+            // U+2C49–2C4A (reserved)
+            // U+2C4B Big Yuz
+            'ⱋ': 'ꙮ',
+            // U+2C4C–2C50 (reserved / other)
+            // U+2C51 Koppa
+            'ⱑ': '͸',
+        };
+
+        // === EXTENDED GLAGOLITIC → LATIN ===
+        const extendedGlagToLat = {
+            'Ⱑ': 'Ô',
+            'ⰰ': 'Y', 'ⰱ': 'Ya',
+            'ⰲ': 'X', 'ⰳ': 'Ps', 'ⰴ': 'U', 'ⰵ': 'Yu',
+            'ⰻ': 'V',
+            'ⰽ': 'I',
+            'ⰾ': 'Dz',
+            'ⰿ': 'Ŝ',
+            'ⱀ': 'Ō', 'ⱁ': 'Ě',
+            'ⱃ': 'Št',
+            'ⱅ': 'X',
+            'ⱆ': 'Ps',
+            'ⱈ': 'Ō',
+            'ⱋ': 'C',
+            'ⱑ': 'K',
         };
 
         // === RUSSIAN CYRILLIC → LATIN (transliteration) ===
@@ -296,6 +352,7 @@
             'у': 'u', 'ф': 'f', 'х': 'kh', 'ц': 'ts', 'ч': 'ch',
             'ш': 'sh', 'щ': 'sch', 'ъ': "'", 'ы': 'y', 'ь': '',
             'э': 'e', 'ю': 'yu', 'я': 'ya',
+            'Ѣ': 'Ě', 'ѣ': 'ě',
         };
 
         // === LATIN → GLAGOLITIC ===
@@ -344,11 +401,21 @@
 
         // Fix: uppercase А maps to same glag as lowercase в — prefer uppercase for reverse
         glagToRu['Ⰰ'] = 'А';
-        glagToRu['Ⱋ'] = 'а';
+        glagToRu['Ⱋ'] = 'a';
         glagToRu['Ⰱ'] = 'В';
         glagToLat['Ⰰ'] = 'A';
         glagToLat['Ⱋ'] = 'a';
         glagToLat['Ⰱ'] = 'V';
+
+        // Fix: chars only in ruToGlag need explicit glagToLat entries
+        glagToLat['Ⰵ'] = 'Zh'; glagToLat['Ⱅ'] = 'Ts'; glagToLat['Ⱆ'] = 'Ch';
+        glagToLat['Ⱇ'] = 'Sh'; glagToLat['Ⱈ'] = 'Sch'; glagToLat['Ⱉ'] = "'";
+        glagToLat['Ⱊ'] = "'"; glagToLat['Ⱌ'] = 'Yu'; glagToLat['Ⱍ'] = 'Ya';
+        glagToLat['Ⱎ'] = 'Ě';
+
+        // Merge extended Glagolitic (U+2C21–U+2C5F) into reverse maps
+        Object.assign(glagToRu, extendedGlagToRu);
+        Object.assign(glagToLat, extendedGlagToLat);
 
         // === DETECT LANGUAGE ===
         const GLAGOLITIC_RANGE = /^[\u2C00-\u2C5F]+$/;
@@ -462,6 +529,15 @@
             ['Ⱄ', 'Х х', 'Kh'], ['Ⱅ', 'Ц ц', 'Ts'], ['Ⱆ', 'Ч ч', 'Ch'],
             ['Ⱇ', 'Ш ш', 'Sh'], ['Ⱈ', 'Щ щ', 'Sch'], ['Ⱉ', 'Ъ', "'"],
             ['Ⱊ', 'Ь', "'"], ['Ⱌ', 'Ю ю', 'Yu'], ['Ⱍ', 'Я я', 'Ya'],
+            ['Ⱎ', 'Ѣ ѣ', 'Ě'],
+            // Extended Glagolitic (U+2C21–U+2C5F)
+            ['Ⱑ', 'Ѡ', 'Ô'], ['ⰰ', 'Ѧ', 'Y'], ['ⰱ', 'Ѩ', 'Ya'],
+            ['ⰲ', 'Ѯ', 'X'], ['ⰳ', 'Ѱ', 'Ps'], ['ⰴ', 'Ѫ', 'U'],
+            ['ⰵ', 'Ѭ', 'Yu'], ['ⰻ', 'Ѵ', 'V'], ['ⰽ', 'І', 'I'],
+            ['ⰾ', 'Ѕ', 'Dz'], ['ⰿ', 'Ꙗ', 'Ŝ'], ['ⱀ', 'Ѡ', 'Ō'],
+            ['ⱁ', 'Ѥ', 'Ě'], ['ⱃ', 'Ꙉ', 'Št'], ['ⱅ', 'Ξ', 'X'],
+            ['ⱆ', 'Ψ', 'Ps'], ['ⱈ', 'Ω', 'Ō'], ['ⱋ', 'ꙮ', 'C'],
+            ['ⱑ', '͸', 'K'],
         ];
 
         function buildRef() {
