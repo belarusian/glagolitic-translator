@@ -84,7 +84,7 @@ class TestRegexParse:
         p = regex_parse()
         result = p("no commands here")
         assert isinstance(result, Err)
-        assert "0 actions" in result.error
+        assert result.error == "exit:task_complete"
 
     def test_multiple_commands(self):
         """Multiple blocks → takes the first one (graceful degradation)."""
@@ -166,10 +166,11 @@ class TestToolcallParse:
         assert "No bash" in result.error
 
     def test_invalid_json(self):
+        """Plain text = completion signal, not a bash command."""
         p = toolcall_parse()
         result = p("not json at all")
-        assert isinstance(result, Ok)
-        assert result.value == "not json at all"
+        assert isinstance(result, Err)
+        assert result.error == "exit:task_complete"
 
     def test_empty_array(self):
         p = toolcall_parse()
@@ -301,30 +302,6 @@ class TestRun:
         assert len(tools) >= 1
         assert "hello" in tools[-1]["content"]
 
-    def test_format_error_retry(self):
-        """V1 fails → G' returns fix → loop retries → succeeds."""
-        call_count = 0
-
-        def mock_G(messages):
-            nonlocal call_count
-            call_count += 1
-            if call_count == 1:
-                return Ok("no commands here")
-            # After retry, keep returning valid command (will succeed and continue)
-            return Ok("```mswea_bash_command\necho retry\n```")
-
-        with tempfile.TemporaryDirectory() as tmpdir:
-            data = _run_and_check(
-                G=mock_G,
-                tmpdir=tmpdir,
-                max_steps=3,  # only 2 useful calls: 1st fails, 2nd succeeds
-            )
-        tools = [m for m in data["messages"] if m.get("role") == "tool"]
-        assert len(tools) >= 1
-        assert "retry" in tools[-1]["content"]
-
-        assert call_count == 3  # failed attempt + retry succeeded + one more then max_steps
-
     def test_format_error_no_fix_stops(self):
         """G' returns None → loop stops immediately."""
         call_count = 0
@@ -342,9 +319,8 @@ class TestRun:
                 G=mock_G,
                 tmpdir=tmpdir,
                 G_prime=stop_fix,
-                expected_outcome="format_error: Found 0 actions. Expected exactly 1.",
+                expected_outcome="format_error: exit:task_complete",
             )
-
         assert call_count == 1
 
     def test_model_error_stops(self):
