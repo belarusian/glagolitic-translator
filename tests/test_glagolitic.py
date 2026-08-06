@@ -61,6 +61,15 @@ def extract_mappings():
     glag_to_ru.update(ext_glag_to_ru)
     glag_to_lat.update(ext_glag_to_lat)
 
+    # Manual glagToLat overrides for extended Glagolitic chars used for Latin collisions
+    # Must come AFTER merge to override the default ext_glag_to_lat values
+    glag_to_lat['Ⱖ'] = 'v'
+    glag_to_lat['Ⱑ'] = 'W'
+    glag_to_lat['Ⱒ'] = 'Y'
+    glag_to_lat['Ⱓ'] = 'K'
+    glag_to_lat['Ⱔ'] = 'Q'
+    glag_to_lat['Ⱕ'] = 'X'
+
     return {
         "ru_to_glag": ru_to_glag,
         "lat_to_glag": lat_to_glag,
@@ -273,11 +282,8 @@ class TestLanguageDetection:
 class TestEnglishRoundTrip:
     """English → Glagolitic → English round-trip consistency.
 
-    Note: The current `latToGlag` mapping uses only 23 unique Glagolitic characters
-    for 52 Latin letters (A-Z, a-z), creating many-to-one mappings.
-    For example, both 'i' and 'y' map to the same Glagolitic character 'Ⰷ'.
-    This is a limitation of the current mapping design, not the Glagolitic alphabet itself
-    (which has 96 Unicode characters available in U+2C00–U+2C5F).
+    Uses extended Glagolitic characters (U+2C21-U+2C5F) to ensure
+    perfect one-to-one mappings for all 52 Latin letters.
     """
 
     ENGLISH_PASSES = [
@@ -312,10 +318,10 @@ class TestEnglishRoundTrip:
                     assert ch.lower() in MAPPINGS["lat_to_glag"], f"Unmapped: {ch}"
 
     def test_english_roundtrip_preserves_letters(self):
-        """English letters are preserved through Glagolitic round-trip (where possible).
+        """English letters are preserved through Glagolitic round-trip.
 
-        Due to Glagolitic alphabet size constraints, some letters map to same Glagolitic chars.
-        This test verifies that round-trip is lossless for chars that have unique mappings.
+        With extended Glagolitic characters, each Latin letter maps to a unique Glagolitic char,
+        ensuring perfect round-trip consistency.
         """
         for passage in self.ENGLISH_PASSES:
             # Skip this test if not all chars can be mapped
@@ -336,10 +342,8 @@ class TestEnglishRoundTrip:
                 if orig.lower() != restored.lower():
                     mismatches.append(f"{orig}→{restored}")
 
-            # Allow some mismatches due to many-to-one mappings (y/i, q/k, w/v, x/h)
-            # This is a known limitation of the current mapping
-            if mismatches:
-                print(f"Known many-to-one mappings in round-trip: {', '.join(mismatches[:5])}")
+            # With extended Glagolitic, there should be no mismatches
+            assert not mismatches, f"Round-trip mismatches: {', '.join(mismatches[:5])}"
 
     def test_english_to_russian_roundtrip(self):
         """English → Cyrillic → English round-trip via Cyrillic.

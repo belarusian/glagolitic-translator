@@ -359,15 +359,15 @@
         const latToGlag = {
             'A': 'Ⰰ', 'B': 'Ⱏ', 'C': 'Ⰹ', 'D': 'Ⰳ', 'E': 'Ⰴ',
             'F': 'Ⱃ', 'G': 'Ⰲ', 'H': 'Ⱄ', 'I': 'Ⰷ', 'J': 'Ⰸ',
-            'K': 'Ⰹ', 'L': 'Ⰺ', 'M': 'Ⰻ', 'N': 'Ⰼ', 'O': 'Ⰽ',
-            'P': 'Ⰾ', 'Q': 'Ⰹ', 'R': 'Ⰿ', 'S': 'Ⱀ', 'T': 'Ⱁ',
-            'U': 'Ⱂ', 'V': 'Ⰱ', 'W': 'Ⰱ', 'X': 'Ⱄ', 'Y': 'Ⰷ',
+            'K': 'Ⱓ', 'L': 'Ⰺ', 'M': 'Ⰻ', 'N': 'Ⰼ', 'O': 'Ⰽ',
+            'P': 'Ⰾ', 'Q': 'Ⱔ', 'R': 'Ⰿ', 'S': 'Ⱀ', 'T': 'Ⱁ',
+            'U': 'Ⱂ', 'V': 'Ⰱ', 'W': 'Ⱑ', 'X': 'Ⱕ', 'Y': 'Ⱒ',
             'Z': 'Ⰶ',
             'a': 'Ⱋ', 'b': 'Ⱐ', 'c': 'Ⰹ', 'd': 'Ⰳ', 'e': 'Ⰴ',
             'f': 'Ⱃ', 'g': 'Ⰲ', 'h': 'Ⱄ', 'i': 'Ⰷ', 'j': 'Ⰸ',
-            'k': 'Ⰹ', 'l': 'Ⰺ', 'm': 'Ⰻ', 'n': 'Ⰼ', 'o': 'Ⰽ',
-            'p': 'Ⰾ', 'q': 'Ⰹ', 'r': 'Ⰿ', 's': 'Ⱀ', 't': 'Ⱁ',
-            'u': 'Ⱂ', 'v': 'Ⰰ', 'w': 'Ⰰ', 'x': 'Ⱄ', 'y': 'Ⰷ',
+            'k': 'Ⱓ', 'l': 'Ⰺ', 'm': 'Ⰻ', 'n': 'Ⰼ', 'o': 'Ⰽ',
+            'p': 'Ⰾ', 'q': 'Ⱔ', 'r': 'Ⰿ', 's': 'Ⱀ', 't': 'Ⱁ',
+            'u': 'Ⱂ', 'v': 'Ⱖ', 'w': 'Ⱑ', 'x': 'Ⱕ', 'y': 'Ⱒ',
             'z': 'Ⰶ',
         };
 
@@ -406,12 +406,22 @@
         glagToLat['Ⰰ'] = 'A';
         glagToLat['Ⱋ'] = 'a';
         glagToLat['Ⰱ'] = 'V';
+        // Fix: lowercase v also maps to Ⰰ (collision with A) - prefer v for lowercase reverse
+        glagToLat['Ⰰ'] = 'V';
 
         // Fix: chars only in ruToGlag need explicit glagToLat entries
         glagToLat['Ⰵ'] = 'Zh'; glagToLat['Ⱅ'] = 'Ts'; glagToLat['Ⱆ'] = 'Ch';
         glagToLat['Ⱇ'] = 'Sh'; glagToLat['Ⱈ'] = 'Sch'; glagToLat['Ⱉ'] = "'";
         glagToLat['Ⱊ'] = "'"; glagToLat['Ⱌ'] = 'Yu'; glagToLat['Ⱍ'] = 'Ya';
         glagToLat['Ⱎ'] = 'Ě';
+
+        // Fix: extended Glagolitic chars used for Latin collisions
+        glagToLat['Ⱖ'] = 'v';
+        glagToLat['Ⱑ'] = 'W';
+        glagToLat['Ⱒ'] = 'Y';
+        glagToLat['Ⱓ'] = 'K';
+        glagToLat['Ⱔ'] = 'Q';
+        glagToLat['Ⱕ'] = 'X';
 
         // Merge extended Glagolitic (U+2C21–U+2C5F) into reverse maps
         Object.assign(glagToRu, extendedGlagToRu);
