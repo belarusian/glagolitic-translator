@@ -356,14 +356,11 @@
         };
 
         // === DIRECT 1:1 ENGLISH → GLAGOLITIC ===
-        // a-z → Ⰰ-Ⱉ (U+2C00–U+2C19), A-Z → Ⱊ-ⰱ (U+2C1A–U+2C31)
+        // Glagolitic has NO capital letters - it's a single-case script (U+2C00–U+2C5F)
+        // Therefore, latToGlag ONLY contains lowercase English → Glagolitic mappings
+        // 26 English lowercase letters → 26 unique lowercase Glagolitic chars (U+2C00–U+2C19)
+        // UPPERCASE ENTRIES REMOVED - Glagolitic doesn't have case!
         const latToGlag = {
-            'A': 'Ⱊ', 'B': 'Ⱋ', 'C': 'Ⱌ', 'D': 'Ⱍ', 'E': 'Ⱎ',
-            'F': 'Ⱏ', 'G': 'Ⱐ', 'H': 'Ⱑ', 'I': 'Ⱒ', 'J': 'Ⱓ',
-            'K': 'Ⱔ', 'L': 'Ⱕ', 'M': 'Ⱖ', 'N': 'Ⱗ', 'O': 'Ⱘ',
-            'P': 'Ⱙ', 'Q': 'Ⱚ', 'R': 'Ⱛ', 'S': 'Ⱜ', 'T': 'Ⱝ',
-            'U': 'Ⱞ', 'V': 'Ⱟ', 'W': 'ⰰ', 'X': 'ⰱ', 'Y': 'ⰲ',
-            'Z': 'ⰳ',
             'a': 'Ⰰ', 'b': 'Ⰱ', 'c': 'Ⰲ', 'd': 'Ⰳ', 'e': 'Ⰴ',
             'f': 'Ⰵ', 'g': 'Ⰶ', 'h': 'Ⰷ', 'i': 'Ⰸ', 'j': 'Ⰹ',
             'k': 'Ⰺ', 'l': 'Ⰻ', 'm': 'Ⰼ', 'n': 'Ⰽ', 'o': 'Ⰾ',
@@ -372,20 +369,14 @@
             'z': 'Ⱉ',
         };
 
-        // === LATIN → CYRILLIC (reverse transliteration) ===
+        // === LATIN → CYRILLIC (Russian phonetic keyboard mapping - lowercase only) ===
+        // QWERTY → ЙЦУКЕН mapping
         const latToCyr = {
-            'A': 'А', 'B': 'Б', 'C': 'К', 'D': 'Д', 'E': 'Е',
-            'F': 'Ф', 'G': 'Г', 'H': 'Х', 'I': 'И', 'J': 'Й',
-            'K': 'К', 'L': 'Л', 'M': 'М', 'N': 'Н', 'O': 'О',
-            'P': 'П', 'Q': 'К', 'R': 'Р', 'S': 'С', 'T': 'Т',
-            'U': 'У', 'V': 'В', 'W': 'В', 'X': 'Х', 'Y': 'Ы',
-            'Z': 'З',
-            'a': 'а', 'b': 'б', 'c': 'к', 'd': 'д', 'e': 'е',
-            'f': 'ф', 'g': 'г', 'h': 'х', 'i': 'и', 'j': 'й',
-            'k': 'к', 'l': 'л', 'm': 'м', 'n': 'н', 'o': 'о',
-            'p': 'п', 'q': 'к', 'r': 'р', 's': 'с', 't': 'т',
-            'u': 'у', 'v': 'в', 'w': 'в', 'x': 'х', 'y': 'ы',
-            'z': 'з',
+            'q': 'я', 'w': 'ш', 'e': 'е', 'r': 'р', 't': 'т', 'y': 'ы', 'u': 'у', 'i': 'и', 'o': 'о', 'p': 'п',
+            '[': 'ю', ']': 'ж', '\\': 'э',
+            'a': 'а', 's': 'с', 'd': 'д', 'f': 'ф', 'g': 'г', 'h': 'ч', 'j': 'й', 'k': 'к', 'l': 'л', ';': 'ь', "'": 'ъ',
+            'z': 'з', 'x': 'х', 'c': 'ц', 'v': 'в', 'b': 'б', 'n': 'н', 'm': 'м',
+            ',': ',', '.': '.', '/': '/', '-': 'ь',
         };
 
         // === GLAGOLITIC → CYRILLIC (reverse) ===
@@ -402,15 +393,8 @@
 
         // Fix: uppercase А maps to same glag as lowercase в — prefer uppercase for reverse
         glagToRu['Ⰰ'] = 'А';
-        glagToRu['Ⱋ'] = 'a';
-        glagToRu['Ⰱ'] = 'В';
-        glagToLat['Ⰰ'] = 'A';
-        glagToLat['Ⱋ'] = 'a';
-        glagToLat['Ⰱ'] = 'V';
-        // Fix: lowercase v also maps to Ⰰ (collision with A) - prefer v for lowercase reverse
-        glagToLat['Ⰰ'] = 'V';
-
-        // Fix: chars only in ruToGlag need explicit glagToLat entries
+        // Glagolitic has no capital letters, so glagToLat only has lowercase entries
+        // No uppercase overrides needed
         glagToLat['Ⰵ'] = 'Zh'; glagToLat['Ⱅ'] = 'Ts'; glagToLat['Ⱆ'] = 'Ch';
         glagToLat['Ⱇ'] = 'Sh'; glagToLat['Ⱈ'] = 'Sch'; glagToLat['Ⱉ'] = "'";
         glagToLat['Ⱊ'] = "'"; glagToLat['Ⱌ'] = 'Yu'; glagToLat['Ⱍ'] = 'Ya';
@@ -420,8 +404,8 @@
         Object.assign(glagToRu, extendedGlagToRu);
         // Note: NOT using extendedGlagToLat for glagToLat - it has wrong mappings
 
-        // Fix: extended Glagolitic chars used for Latin collisions (lowercase)
-        // These must come after Object.assign to take precedence
+        // Fix: extended Glagolitic chars used for Latin collisions (lowercase only)
+        // Glagolitic has no caps, so all entries are lowercase
         glagToLat['Ⱖ'] = 'v';
         glagToLat['Ⱏ'] = 'b';
         glagToLat['Ⱑ'] = 'w';
