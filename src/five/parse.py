@@ -33,7 +33,8 @@ def regex_parse(
             if matches:
                 # Return the first match from the most specific pattern that worked
                 return Ok(matches[0].strip())
-        return Err(error_template.format(count=0))
+        # No code block found — model returned plain text = final answer
+        return Err("exit:task_complete")
 
     return _parse
 
