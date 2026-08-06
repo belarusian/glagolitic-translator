@@ -9,7 +9,7 @@ fix      : G'  -- (error, messages) → message | None
 emit     : IO  -- (messages, outcome) → Path
 """
 
-from .core import Err, Ok, Result, run, save_trajectory
+from .core import Err, Ok, Result, run, save_trajectory, AbortError, retry_invoke
 from .model import (
     BASH_TOOL,
     BASH_TOOL_RESPONSE_API,
@@ -25,6 +25,8 @@ __all__ = [
     "Result",
     "run",
     "save_trajectory",
+    "AbortError",
+    "retry_invoke",
     "BASH_TOOL",
     "BASH_TOOL_RESPONSE_API",
     "litellm_toolcall_invoke",

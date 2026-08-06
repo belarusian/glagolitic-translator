@@ -78,7 +78,7 @@ class TestRegexParse:
         raw = "```mswea_bash_command\necho hello\n```"
         result = p(raw)
         assert isinstance(result, Ok)
-        assert result.value == "echo hello"
+        assert result.value == [{"command": "echo hello", "tool_call_id": None}]
 
     def test_empty_response(self):
         p = regex_parse()
@@ -94,16 +94,15 @@ class TestRegexParse:
             "```mswea_bash_command\necho two\n```"
         )
         result = p(raw)
-        # Takes first match — graceful degradation on multi-block responses
         assert isinstance(result, Ok)
-        assert result.value == "echo one"
+        assert result.value == [{"command": "echo one", "tool_call_id": None}]
 
     def test_custom_pattern(self):
         p = regex_parse(pattern=r"```bash\n(.*?)\n```")
         raw = "```bash\necho hi\n```"
         result = p(raw)
         assert isinstance(result, Ok)
-        assert result.value == "echo hi"
+        assert result.value == [{"command": "echo hi", "tool_call_id": None}]
 
     def test_accepts_bash_blocks(self):
         """Model uses ```bash``` instead of ```mswea_bash_command``` — still works."""
@@ -111,14 +110,14 @@ class TestRegexParse:
         raw = "```bash\necho hello\n```"
         result = p(raw)
         assert isinstance(result, Ok)
-        assert result.value == "echo hello"
+        assert result.value == [{"command": "echo hello", "tool_call_id": None}]
 
     def test_accepts_sh_blocks(self):
         p = regex_parse()
         raw = "```sh\necho hi\n```"
         result = p(raw)
         assert isinstance(result, Ok)
-        assert result.value == "echo hi"
+        assert result.value == [{"command": "echo hi", "tool_call_id": None}]
 
     def test_thought_with_bash_block(self):
         """Model includes THOUGHT before the code block."""
@@ -126,15 +125,27 @@ class TestRegexParse:
         raw = "THOUGHT: I will run this command\n\n```bash\necho hello\n```"
         result = p(raw)
         assert isinstance(result, Ok)
-        assert result.value == "echo hello"
+        assert result.value == [{"command": "echo hello", "tool_call_id": None}]
 
     def test_multiline_command(self):
         p = regex_parse()
         raw = "```mswea_bash_command\ncat <<'EOF'\nline1\nline2\nEOF\n```"
         result = p(raw)
         assert isinstance(result, Ok)
-        assert "line1" in result.value
-        assert "line2" in result.value
+        cmd = result.value[0]["command"]
+        assert "line1" in cmd
+        assert "line2" in cmd
+
+    def test_returns_list_of_dicts(self):
+        """V1 now returns list of {command, tool_call_id} dicts."""
+        p = regex_parse()
+        raw = "```bash\necho test\n```"
+        result = p(raw)
+        assert isinstance(result, Ok)
+        assert isinstance(result.value, list)
+        assert len(result.value) == 1
+        assert result.value[0]["command"] == "echo test"
+        assert result.value[0]["tool_call_id"] is None
 
 
 # ── toolcall_parse ──────────────────────────────────────────────────────────
@@ -150,9 +161,11 @@ class TestToolcallParse:
         }])
         result = p(raw)
         assert isinstance(result, Ok)
-        # V1 embeds call_id as comment for V2 to extract
-        assert "#call_id:1" in result.value
-        assert "echo hi" in result.value
+        # V1 returns list of {command, tool_call_id} dicts
+        assert isinstance(result.value, list)
+        assert len(result.value) == 1
+        assert result.value[0]["command"] == "echo hi"
+        assert result.value[0]["tool_call_id"] == "1"
 
     def test_no_bash_tool(self):
         p = toolcall_parse()
