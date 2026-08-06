@@ -51,8 +51,8 @@ def toolcall_parse() -> Parse:
         try:
             actions = json.loads(raw)
         except json.JSONDecodeError:
-            # Not tool-call JSON — treat as plain text (might have regex pattern)
-            return Ok(raw)
+            # Not tool-call JSON — model returned plain text = final answer
+            return Err("exit:task_complete")
 
         if not isinstance(actions, list) or not actions:
             return Err("No tool calls found")
