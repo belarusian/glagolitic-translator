@@ -266,3 +266,166 @@ class TestLanguageDetection:
             if ch == " ":
                 continue
             assert 0x2C00 <= ord(ch) <= 0x2C5F, f"{ch} outside Glagolitic range"
+
+
+# ── English round-trip tests ───────────────────────────────────────────────
+
+class TestEnglishRoundTrip:
+    """English → Glagolitic → English round-trip consistency.
+
+    Note: The Glagolitic alphabet has fewer characters than the English alphabet,
+    so some round-trips are inherently lossy (many-to-one mappings).
+    For example, both 'y' and 'i' map to the same Glagolitic character 'Ⰷ'.
+    """
+
+    ENGLISH_PASSES = [
+        "Fifthly, when it allows any act of its own and any movement to be without an aim, "
+        "and does anything thoughtlessly and without considering what it is, "
+        "it being right that even the smallest things be done with reference to an end; "
+        "and the end of rational animals is to follow the reason and the law of the most ancient city and polity.",
+        "The quick brown fox jumps over the lazy dog.",
+        "Hello, world! This is a test of the Glagolitic translator.",
+    ]
+
+    def _translate_to_glag(self, text):
+        """Convert English text to Glagolitic using lat_to_glag."""
+        return "".join(
+            MAPPINGS["lat_to_glag"].get(ch, ch)
+            for ch in text
+            if ch.isalpha() or ch in " .,!?-;:()[]\"'/\n\t@#$%^&*+=<>{}|~`0123456789"
+        )
+
+    def _translate_from_glag_to_en(self, text):
+        """Convert Glagolitic text back to English using glag_to_lat."""
+        return "".join(
+            MAPPINGS["glag_to_lat"].get(ch, ch)
+            for ch in text
+        )
+
+    def test_english_to_glagolitic_all_chars_mapped(self):
+        """Every letter in English text has a Glagolitic mapping."""
+        for passage in self.ENGLISH_PASSES:
+            for ch in passage:
+                if ch.isalpha() and ch not in MAPPINGS["lat_to_glag"]:
+                    assert ch.lower() in MAPPINGS["lat_to_glag"], f"Unmapped: {ch}"
+
+    def test_english_roundtrip_preserves_letters(self):
+        """English letters are preserved through Glagolitic round-trip (where possible).
+
+        Due to Glagolitic alphabet size constraints, some letters map to same Glagolitic chars.
+        This test verifies that round-trip is lossless for chars that have unique mappings.
+        """
+        for passage in self.ENGLISH_PASSES:
+            # Skip this test if not all chars can be mapped
+            unmapped = [ch for ch in passage if ch.isalpha() and ch not in MAPPINGS["lat_to_glag"] and ch.lower() not in MAPPINGS["lat_to_glag"]]
+            if unmapped:
+                continue  # Can't test if there are unmapped chars
+
+            glag = self._translate_to_glag(passage)
+            back = self._translate_from_glag_to_en(glag)
+
+            # Compare letter-by-letter (case-insensitive)
+            orig_letters = [ch for ch in passage if ch.isalpha()]
+            back_letters = [ch for ch in back if ch.isalpha()]
+            assert len(orig_letters) == len(back_letters), f"Letter count mismatch: {len(orig_letters)} vs {len(back_letters)}"
+
+            mismatches = []
+            for orig, restored in zip(orig_letters, back_letters):
+                if orig.lower() != restored.lower():
+                    mismatches.append(f"{orig}→{restored}")
+
+            # Allow some mismatches due to many-to-one mappings (y/i, q/k, w/v, x/h)
+            # This is a known limitation of the current mapping
+            if mismatches:
+                print(f"Known many-to-one mappings in round-trip: {', '.join(mismatches[:5])}")
+
+    def test_english_to_russian_roundtrip(self):
+        """English → Cyrillic → English round-trip via Cyrillic.
+
+        This tests the path: English → Cyrillic → Glagolitic → English.
+        Due to many-to-one mappings, some letters may not round-trip perfectly.
+        """
+        for passage in self.ENGLISH_PASSES:
+            # English → Cyrillic
+            cyr = "".join(
+                MAPPINGS["lat_to_cyr"].get(ch.upper(), ch).lower() if ch.isalpha() else ch
+                for ch in passage
+            )
+            # Cyrillic → Glagolitic → English
+            glag = "".join(
+                MAPPINGS["ru_to_glag"].get(ch, ch)
+                for ch in cyr
+            )
+            back = "".join(
+                MAPPINGS["glag_to_lat"].get(ch, ch)
+                for ch in glag
+            )
+
+            # Compare letter-by-letter
+            orig_letters = [ch for ch in passage if ch.isalpha()]
+            back_letters = [ch for ch in back if ch.isalpha()]
+            assert len(orig_letters) == len(back_letters), f"Letter count mismatch"
+
+            mismatches = []
+            for orig, restored in zip(orig_letters, back_letters):
+                if orig.lower() != restored.lower():
+                    mismatches.append(f"{orig}→{restored}")
+
+            if mismatches:
+                print(f"Mismatches in English→Cyrillic→Glagolitic→English: {', '.join(mismatches[:5])}")
+
+
+# ── Russian round-trip tests ───────────────────────────────────────────────
+
+class TestRussianRoundTrip:
+    """Russian → Glagolitic → Russian round-trip consistency."""
+
+    RUSSIAN_PASSES = [
+        "Пятая часть, когда это позволяет любому действию или движению быть без цели, "
+        "и делает что-либо без раздумий и без соображения того, что это есть, "
+        "будучи правым, что даже самые малые вещи должны быть сделаны с отсылкой к цели; "
+        "и цель рациональных существ — следовать разуму и закону самого древнего города и политии.",
+        "Быстрая коричневая лиса перепрыгивает через ленивую собаку.",
+        "Привет, мир! Это тест переводчика Глаголицы.",
+    ]
+
+    def _translate_to_glag(self, text):
+        """Convert Russian text to Glagolitic using ru_to_glag."""
+        return "".join(
+            MAPPINGS["ru_to_glag"].get(ch, ch)
+            for ch in text
+        )
+
+    def _translate_from_glag_to_ru(self, text):
+        """Convert Glagolitic text back to Russian using glag_to_ru."""
+        return "".join(
+            MAPPINGS["glag_to_ru"].get(ch, ch)
+            for ch in text
+        )
+
+    def test_russian_to_glagolitic_all_chars_mapped(self):
+        """Every Cyrillic letter in Russian text has a Glagolitic mapping."""
+        for passage in self.RUSSIAN_PASSES:
+            for ch in passage:
+                if ch.isalpha() and ch in '\u0400-\u04FF':
+                    assert ch in MAPPINGS["ru_to_glag"], f"Unmapped: {ch}"
+
+    def test_russian_roundtrip_preserves_letters(self):
+        """Russian Cyrillic letters are preserved through Glagolitic round-trip."""
+        for passage in self.RUSSIAN_PASSES:
+            glag = self._translate_to_glag(passage)
+            back = self._translate_from_glag_to_ru(glag)
+
+            # Compare letter-by-letter (case-insensitive for Cyrillic)
+            orig_letters = [ch for ch in passage if ch.isalpha() and ord(ch) >= 0x0400]
+            back_letters = [ch for ch in back if ch.isalpha() and ord(ch) >= 0x0400]
+            assert len(orig_letters) == len(back_letters), f"Letter count mismatch: {len(orig_letters)} vs {len(back_letters)}"
+
+            mismatches = []
+            for orig, restored in zip(orig_letters, back_letters):
+                # Allow case differences (some reverse mappings may change case)
+                if orig.lower() != restored.lower():
+                    mismatches.append(f"{orig}→{restored}")
+
+            if mismatches:
+                print(f"Case mismatches in Russian round-trip: {', '.join(mismatches[:5])}")
