@@ -13,7 +13,6 @@ from .core import Err, Ok, Result, run, save_trajectory
 from .model import (
     BASH_TOOL,
     BASH_TOOL_RESPONSE_API,
-    litellm_invoke,
     litellm_toolcall_invoke,
     litellm_response_invoke,
     http_response_invoke,
@@ -29,7 +28,6 @@ __all__ = [
     "save_trajectory",
     "BASH_TOOL",
     "BASH_TOOL_RESPONSE_API",
-    "litellm_invoke",
     "litellm_toolcall_invoke",
     "litellm_response_invoke",
     "http_response_invoke",

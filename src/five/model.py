@@ -1,8 +1,7 @@
 """LiteLLM model wrappers — G (invoke) for both APIs.
 
 Chat Completions API: litellm.completion() with tools=[BASH_TOOL]
-Responses API:        litellm.responses() with tools=[BASH_TOOL_RESPONSE_API]
-                     OR direct HTTP to /v1/responses (bypasses litellm auth check)
+Responses API:        direct HTTP to /v1/responses (bypasses litellm auth check)
 """
 
 from __future__ import annotations
@@ -56,37 +55,6 @@ BASH_TOOL_RESPONSE_API = {
 
 
 # ── Chat Completions API G ─────────────────────────────────────────────────
-
-
-def litellm_invoke(
-    model: str = "anthropic/claude-sonnet-4-5-20250929",
-    tools: list[dict] | None = None,
-    **model_kwargs,
-) -> Invoke:
-    """G via litellm.completion() — plain text response."""
-
-    def _invoke(messages: list[dict]) -> Ok[str] | Err[str]:
-        import litellm
-
-        clean = [
-            {k: v for k, v in m.items()
-             if k in ("role", "content", "tool_calls", "tool_call_id", "name")}
-            for m in messages
-        ]
-
-        try:
-            kwargs = {"model": model, "messages": clean, **model_kwargs}
-            if tools:
-                kwargs["tools"] = tools
-
-            response = litellm.completion(**kwargs)
-            content = response.choices[0].message.content or ""
-            return Ok(content)
-
-        except Exception as e:
-            return Err(f"{type(e).__name__}: {e}")
-
-    return _invoke
 
 
 def litellm_toolcall_invoke(
