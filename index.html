@@ -415,17 +415,19 @@
         glagToLat['Ⱊ'] = "'"; glagToLat['Ⱌ'] = 'Yu'; glagToLat['Ⱍ'] = 'Ya';
         glagToLat['Ⱎ'] = 'Ě';
 
-        // Fix: extended Glagolitic chars used for Latin collisions
-        glagToLat['Ⱖ'] = 'v';
-        glagToLat['Ⱑ'] = 'W';
-        glagToLat['Ⱒ'] = 'Y';
-        glagToLat['Ⱓ'] = 'K';
-        glagToLat['Ⱔ'] = 'Q';
-        glagToLat['Ⱕ'] = 'X';
-
         // Merge extended Glagolitic (U+2C21–U+2C5F) into reverse maps
         Object.assign(glagToRu, extendedGlagToRu);
         Object.assign(glagToLat, extendedGlagToLat);
+
+        // Fix: extended Glagolitic chars used for Latin collisions (lowercase)
+        // These must come after Object.assign to take precedence
+        glagToLat['Ⱖ'] = 'v';
+        glagToLat['Ⱏ'] = 'b';
+        glagToLat['Ⱑ'] = 'w';
+        glagToLat['Ⱒ'] = 'y';
+        glagToLat['Ⱓ'] = 'k';
+        glagToLat['Ⱔ'] = 'q';
+        glagToLat['Ⱕ'] = 'x';
 
         // === DETECT LANGUAGE ===
         const GLAGOLITIC_RANGE = /^[\u2C00-\u2C5F]+$/;
