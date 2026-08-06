@@ -7,11 +7,8 @@ Responses API:        direct HTTP to /v1/responses (bypasses litellm auth check)
 from __future__ import annotations
 
 import json
-import logging
 
 from .core import Err, Invoke, Ok
-
-logger = logging.getLogger("five.model")
 
 # ── Chat Completions API tool definition (nested "function" key) ────────────
 
@@ -96,82 +93,6 @@ def litellm_toolcall_invoke(
                     "tool_call_id": tc.id,
                     "name": func.name,
                     "arguments": func.arguments,
-                })
-
-            return Ok(json.dumps(actions))
-
-        except Exception as e:
-            return Err(f"{type(e).__name__}: {e}")
-
-    return _invoke
-
-
-# ── Responses API G ────────────────────────────────────────────────────────
-
-
-def litellm_response_invoke(
-    model: str = "anthropic/claude-sonnet-4-5-20250929",
-    **model_kwargs,
-) -> Invoke:
-    """G via litellm.responses() — Responses API with tool calls.
-
-    Uses flat function definitions (no nested "function" key).
-    Returns JSON array of {call_id, name, arguments}.
-    V1 should use toolcall_response_parse().
-    """
-
-    def _invoke(messages: list[dict]) -> Ok[str] | Err[str]:
-        import litellm
-
-        # Flatten response objects into output items for stateless API calls
-        clean = []
-        for msg in messages:
-            if msg.get("object") == "response":
-                for item in msg.get("output", []):
-                    clean.append({k: v for k, v in item.items() if k != "extra"})
-            else:
-                clean.append({k: v for k, v in msg.items() if k != "extra"})
-
-        try:
-            response = litellm.responses(
-                model=model,
-                input=clean,
-                tools=[BASH_TOOL_RESPONSE_API],
-                **model_kwargs,
-            )
-
-            # Responses API returns output as a list of items
-            output = getattr(response, "output", []) or []
-            tool_calls = []
-            for item in output:
-                item_type = (item.get("type") if isinstance(item, dict)
-                             else getattr(item, "type", None))
-                if item_type == "function_call":
-                    td = item.model_dump() if hasattr(item, "model_dump") else \
-                         dict(item) if not isinstance(item, dict) else item
-                    tool_calls.append(td)
-
-            if not tool_calls:
-                # No tool calls — return text content as plain string
-                text_items = [i for i in output if i.get("type") == "message"
-                              and any(c.get("type") == "output_text"
-                                      for c in i.get("content", []))]
-                if text_items:
-                    text = " ".join(
-                        c.get("text", "")
-                        for item in text_items
-                        for c in item.get("content", [])
-                        if isinstance(c, dict) and c.get("type") == "output_text"
-                    )
-                    return Ok(text)
-                return Ok("")
-
-            actions = []
-            for tc in tool_calls:
-                actions.append({
-                    "tool_call_id": tc.get("call_id") or tc.get("id"),
-                    "name": tc.get("name"),
-                    "arguments": tc.get("arguments", "{}"),
                 })
 
             return Ok(json.dumps(actions))

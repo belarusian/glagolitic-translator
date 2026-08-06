@@ -14,7 +14,6 @@ from .model import (
     BASH_TOOL,
     BASH_TOOL_RESPONSE_API,
     litellm_toolcall_invoke,
-    litellm_response_invoke,
     http_response_invoke,
 )
 from .parse import regex_parse, toolcall_parse, toolcall_response_parse
@@ -29,7 +28,6 @@ __all__ = [
     "BASH_TOOL",
     "BASH_TOOL_RESPONSE_API",
     "litellm_toolcall_invoke",
-    "litellm_response_invoke",
     "http_response_invoke",
     "regex_parse",
     "toolcall_parse",
