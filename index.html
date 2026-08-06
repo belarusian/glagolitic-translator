@@ -355,20 +355,21 @@
             'Ѣ': 'Ě', 'ѣ': 'ě',
         };
 
-        // === LATIN → GLAGOLITIC ===
+        // === DIRECT 1:1 ENGLISH → GLAGOLITIC ===
+        // a-z → Ⰰ-Ⱉ (U+2C00–U+2C19), A-Z → Ⱊ-ⰱ (U+2C1A–U+2C31)
         const latToGlag = {
-            'A': 'Ⰰ', 'B': 'Ⱏ', 'C': 'Ⰹ', 'D': 'Ⰳ', 'E': 'Ⰴ',
-            'F': 'Ⱃ', 'G': 'Ⰲ', 'H': 'Ⱄ', 'I': 'Ⰷ', 'J': 'Ⰸ',
-            'K': 'Ⱓ', 'L': 'Ⰺ', 'M': 'Ⰻ', 'N': 'Ⰼ', 'O': 'Ⰽ',
-            'P': 'Ⰾ', 'Q': 'Ⱔ', 'R': 'Ⰿ', 'S': 'Ⱀ', 'T': 'Ⱁ',
-            'U': 'Ⱂ', 'V': 'Ⰱ', 'W': 'Ⱑ', 'X': 'Ⱕ', 'Y': 'Ⱒ',
-            'Z': 'Ⰶ',
-            'a': 'Ⱋ', 'b': 'Ⱐ', 'c': 'Ⰹ', 'd': 'Ⰳ', 'e': 'Ⰴ',
-            'f': 'Ⱃ', 'g': 'Ⰲ', 'h': 'Ⱄ', 'i': 'Ⰷ', 'j': 'Ⰸ',
-            'k': 'Ⱓ', 'l': 'Ⰺ', 'm': 'Ⰻ', 'n': 'Ⰼ', 'o': 'Ⰽ',
-            'p': 'Ⰾ', 'q': 'Ⱔ', 'r': 'Ⰿ', 's': 'Ⱀ', 't': 'Ⱁ',
-            'u': 'Ⱂ', 'v': 'Ⱖ', 'w': 'Ⱑ', 'x': 'Ⱕ', 'y': 'Ⱒ',
-            'z': 'Ⰶ',
+            'A': 'Ⱊ', 'B': 'Ⱋ', 'C': 'Ⱌ', 'D': 'Ⱍ', 'E': 'Ⱎ',
+            'F': 'Ⱏ', 'G': 'Ⱐ', 'H': 'Ⱑ', 'I': 'Ⱒ', 'J': 'Ⱓ',
+            'K': 'Ⱔ', 'L': 'Ⱕ', 'M': 'Ⱖ', 'N': 'Ⱗ', 'O': 'Ⱘ',
+            'P': 'Ⱙ', 'Q': 'Ⱚ', 'R': 'Ⱛ', 'S': 'Ⱜ', 'T': 'Ⱝ',
+            'U': 'Ⱞ', 'V': 'Ⱟ', 'W': 'ⰰ', 'X': 'ⰱ', 'Y': 'ⰲ',
+            'Z': 'ⰳ',
+            'a': 'Ⰰ', 'b': 'Ⰱ', 'c': 'Ⰲ', 'd': 'Ⰳ', 'e': 'Ⰴ',
+            'f': 'Ⰵ', 'g': 'Ⰶ', 'h': 'Ⰷ', 'i': 'Ⰸ', 'j': 'Ⰹ',
+            'k': 'Ⰺ', 'l': 'Ⰻ', 'm': 'Ⰼ', 'n': 'Ⰽ', 'o': 'Ⰾ',
+            'p': 'Ⰿ', 'q': 'Ⱀ', 'r': 'Ⱁ', 's': 'Ⱂ', 't': 'Ⱃ',
+            'u': 'Ⱄ', 'v': 'Ⱅ', 'w': 'Ⱆ', 'x': 'Ⱇ', 'y': 'Ⱈ',
+            'z': 'Ⱉ',
         };
 
         // === LATIN → CYRILLIC (reverse transliteration) ===
@@ -417,7 +418,7 @@
 
         // Merge extended Glagolitic (U+2C21–U+2C5F) into reverse maps
         Object.assign(glagToRu, extendedGlagToRu);
-        Object.assign(glagToLat, extendedGlagToLat);
+        // Note: NOT using extendedGlagToLat for glagToLat - it has wrong mappings
 
         // Fix: extended Glagolitic chars used for Latin collisions (lowercase)
         // These must come after Object.assign to take precedence
