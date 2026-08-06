@@ -148,6 +148,8 @@ def format_fix(
 
     Returns a message to append to history, or None to stop.
     """
+    if error == "exit:task_complete":
+        return None
     return {
         "role": "user",
         "content": template.format(error=error),
