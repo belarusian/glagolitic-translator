@@ -1,13 +1,11 @@
 """Live integration test runner against local llama.cpp models.
 
 Usage:
-    python examples/run_live.py --variant chat --prompt "..."
     python examples/run_live.py --variant toolcall --prompt "..."
     python examples/run_live.py --variant responses --prompt "..."
     python examples/run_live.py --variant mini --prompt "..."
 
 Variants:
-    chat        Chat Completions API + regex parsing
     toolcall    Chat Completions API + tool calls
     responses   Responses API + tool calls (equivalent to mini-swe-agent)
     mini        mini-swe-agent subprocess
@@ -37,8 +35,8 @@ def make_parser():
     p = argparse.ArgumentParser(description="Run Five live test")
     p.add_argument(
         "--variant",
-        choices=["chat", "toolcall", "responses", "mini"],
-        default="chat",
+        choices=["toolcall", "responses", "mini"],
+        default="toolcall",
     )
     p.add_argument(
         "--endpoint",
@@ -49,44 +47,13 @@ def make_parser():
 
 
 def run_five_variant(variant, endpoint, prompt, model_id, max_tokens, max_steps):
-    """Run one of the three Five variants (chat, toolcall, responses)."""
+    """Run one of the Five variants (toolcall, responses)."""
     step_num = [0]
     debug_g: Callable = lambda m: Err("not configured")  # type: ignore
     v1 = None
     system = None
 
-    if variant == "chat":
-        from five.model import litellm_invoke
-        from five.parse import regex_parse
-
-        LITELLM_MODEL = f"openai/{model_id}"
-
-        def debug_g(messages):
-            step_num[0] += 1
-            t0 = time.time()
-            result = litellm_invoke(
-                model=LITELLM_MODEL,
-                base_url=endpoint,
-                temperature=0.3,
-                max_tokens=max_tokens,
-                api_key="dummy",
-            )(messages)
-            elapsed = time.time() - t0
-            if isinstance(result, Ok):
-                preview = result.value[:120].replace("\n", " ")
-                print(f"  [G step {step_num[0]}] ({elapsed:.1f}s) -> {preview}...")
-            else:
-                print(f"  [G step {step_num[0]}] ({elapsed:.1f}s) ERR: {result.error[:100]}")
-            return result
-
-        v1 = regex_parse()
-        system = (
-            "You are a bash agent. You solve tasks by executing bash commands. "
-            "Wrap each command in a ```bash ... ``` block. "
-            "When the task is fully done, run: echo COMPLETE_TASK_AND_SUBMIT_FINAL_OUTPUT"
-        )
-
-    elif variant == "toolcall":
+    if variant == "toolcall":
         from five.model import litellm_toolcall_invoke
         from five.parse import toolcall_parse
 
