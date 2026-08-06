@@ -13,13 +13,11 @@ from .core import Err, Ok, Result, run, save_trajectory, AbortError, retry_invok
 from .model import (
     BASH_TOOL,
     BASH_TOOL_RESPONSE_API,
-    litellm_invoke,
     litellm_toolcall_invoke,
-    litellm_response_invoke,
     http_response_invoke,
 )
 from .parse import regex_parse, toolcall_parse, toolcall_response_parse
-from .env import format_fix, local_env
+from .env import format_fix, local_env, local_env_response
 
 __all__ = [
     "Err",
@@ -31,13 +29,12 @@ __all__ = [
     "retry_invoke",
     "BASH_TOOL",
     "BASH_TOOL_RESPONSE_API",
-    "litellm_invoke",
     "litellm_toolcall_invoke",
-    "litellm_response_invoke",
     "http_response_invoke",
     "regex_parse",
     "toolcall_parse",
     "toolcall_response_parse",
     "local_env",
+    "local_env_response",
     "format_fix",
 ]

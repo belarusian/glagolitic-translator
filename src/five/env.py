@@ -84,18 +84,21 @@ def local_env_response(
     Returns observations in Responses API format:
     {"type": "function_call_output", "call_id": ..., "output": ...}
 
-    The call_id is extracted from the action dict (passed via closure).
+    Extracts call_id from #call_id: comment prefix embedded by V1.
     """
-    _last_call_id = "call_unknown"
 
     def _validate(action: str) -> Ok[dict] | Err[str]:
-        # action is the command string (V1 extracts it from the tool call)
-        # We need to pass the call_id through the loop — use a global for now
-        nonlocal _last_call_id
+        # Extract call_id if embedded by V1
+        call_id = "call_unknown"
+        command = action
+        if action.startswith("#call_id:"):
+            parts = action.split("\n", 1)
+            call_id = parts[0].split(":", 1)[1]
+            command = parts[1] if len(parts) > 1 else ""
 
         try:
             result = subprocess.run(
-                action,
+                command,
                 shell=True,
                 capture_output=True,
                 text=True,
@@ -127,7 +130,7 @@ def local_env_response(
         # For Responses API, return as function_call_output
         observation = {
             "type": "function_call_output",
-            "call_id": _last_call_id,
+            "call_id": call_id,
             "output": content,
         }
 
@@ -145,6 +148,8 @@ def format_fix(
 
     Returns a message to append to history, or None to stop.
     """
+    if error == "exit:task_complete":
+        return None
     return {
         "role": "user",
         "content": template.format(error=error),
