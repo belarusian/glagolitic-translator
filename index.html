@@ -355,67 +355,34 @@
             'Ѣ': 'Ě', 'ѣ': 'ě',
         };
 
-        // === LATIN → GLAGOLITIC ===
-        const latToGlag = {
-            'A': 'Ⰰ', 'B': 'Ⱏ', 'C': 'Ⰹ', 'D': 'Ⰳ', 'E': 'Ⰴ',
-            'F': 'Ⱃ', 'G': 'Ⰲ', 'H': 'Ⱄ', 'I': 'Ⰷ', 'J': 'Ⰸ',
-            'K': 'Ⰹ', 'L': 'Ⰺ', 'M': 'Ⰻ', 'N': 'Ⰼ', 'O': 'Ⰽ',
-            'P': 'Ⰾ', 'Q': 'Ⰹ', 'R': 'Ⰿ', 'S': 'Ⱀ', 'T': 'Ⱁ',
-            'U': 'Ⱂ', 'V': 'Ⰱ', 'W': 'Ⰱ', 'X': 'Ⱄ', 'Y': 'Ⰷ',
-            'Z': 'Ⰶ',
-            'a': 'Ⱋ', 'b': 'Ⱐ', 'c': 'Ⰹ', 'd': 'Ⰳ', 'e': 'Ⰴ',
-            'f': 'Ⱃ', 'g': 'Ⰲ', 'h': 'Ⱄ', 'i': 'Ⰷ', 'j': 'Ⰸ',
-            'k': 'Ⰹ', 'l': 'Ⰺ', 'm': 'Ⰻ', 'n': 'Ⰼ', 'o': 'Ⰽ',
-            'p': 'Ⰾ', 'q': 'Ⰹ', 'r': 'Ⰿ', 's': 'Ⱀ', 't': 'Ⱁ',
-            'u': 'Ⱂ', 'v': 'Ⰰ', 'w': 'Ⰰ', 'x': 'Ⱄ', 'y': 'Ⰷ',
-            'z': 'Ⰶ',
+        // === RUSSIAN CYRILLIC → LATIN (proper phonetic transliteration) ===
+        // Hub-and-spoke: English → Russian (phonetic) → Glagolitic
+        // This is the canonical Latin representation of Cyrillic text
+        const ruToLatin = {
+            'А': 'A', 'Б': 'B', 'В': 'V', 'Г': 'G', 'Д': 'D',
+            'Е': 'Ye', 'Ё': 'Yo', 'Ж': 'Zh', 'З': 'Z', 'И': 'I',
+            'Й': 'J', 'К': 'K', 'Л': 'L', 'М': 'M', 'Н': 'N',
+            'О': 'O', 'П': 'P', 'Р': 'R', 'С': 'S', 'Т': 'T',
+            'У': 'U', 'Ф': 'F', 'Х': 'Kh', 'Ц': 'Ts', 'Ч': 'Ch',
+            'Ш': 'Sh', 'Щ': 'Sch', 'Ъ': "'", 'Ы': 'Y', 'Ь': '',
+            'Э': 'E', 'Ю': 'Yu', 'Я': 'Ya', 'Ѣ': 'Ě',
+            'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd',
+            'е': 'ye', 'ё': 'yo', 'ж': 'zh', 'з': 'z', 'и': 'i',
+            'й': 'j', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n',
+            'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't',
+            'у': 'u', 'ф': 'f', 'х': 'kh', 'ц': 'ts', 'ч': 'ch',
+            'ш': 'sh', 'щ': 'sch', 'ъ': "'", 'ы': 'y', 'ь': '',
+            'э': 'e', 'ю': 'yu', 'я': 'ya', 'ѣ': 'ě',
         };
 
-        // === LATIN → CYRILLIC (reverse transliteration) ===
-        const latToCyr = {
-            'A': 'А', 'B': 'Б', 'C': 'К', 'D': 'Д', 'E': 'Е',
-            'F': 'Ф', 'G': 'Г', 'H': 'Х', 'I': 'И', 'J': 'Й',
-            'K': 'К', 'L': 'Л', 'M': 'М', 'N': 'Н', 'O': 'О',
-            'P': 'П', 'Q': 'К', 'R': 'Р', 'S': 'С', 'T': 'Т',
-            'U': 'У', 'V': 'В', 'W': 'В', 'X': 'Х', 'Y': 'Ы',
-            'Z': 'З',
-            'a': 'а', 'b': 'б', 'c': 'к', 'd': 'д', 'e': 'е',
-            'f': 'ф', 'g': 'г', 'h': 'х', 'i': 'и', 'j': 'й',
-            'k': 'к', 'l': 'л', 'm': 'м', 'n': 'н', 'o': 'о',
-            'p': 'п', 'q': 'к', 'r': 'р', 's': 'с', 't': 'т',
-            'u': 'у', 'v': 'в', 'w': 'в', 'x': 'х', 'y': 'ы',
-            'z': 'з',
-        };
-
-        // === GLAGOLITIC → CYRILLIC (reverse) ===
+        // === GLAGOLITIC → CYRILLIC (reverse of ruToGlag) ===
+        // Iterate in REVERSE so lowercase Cyrillic wins (ruToGlag lists uppercase first)
         const glagToRu = {};
         for (const [cyr, glag] of Object.entries(ruToGlag)) {
-            if (!glagToRu[glag]) glagToRu[glag] = cyr;
+            glagToRu[glag] = cyr; // last write wins → lowercase preferred
         }
-
-        // === GLAGOLITIC → LATIN (reverse) ===
-        const glagToLat = {};
-        for (const [lat, glag] of Object.entries(latToGlag)) {
-            if (!glagToLat[glag]) glagToLat[glag] = lat;
-        }
-
-        // Fix: uppercase А maps to same glag as lowercase в — prefer uppercase for reverse
-        glagToRu['Ⰰ'] = 'А';
-        glagToRu['Ⱋ'] = 'a';
-        glagToRu['Ⰱ'] = 'В';
-        glagToLat['Ⰰ'] = 'A';
-        glagToLat['Ⱋ'] = 'a';
-        glagToLat['Ⰱ'] = 'V';
-
-        // Fix: chars only in ruToGlag need explicit glagToLat entries
-        glagToLat['Ⰵ'] = 'Zh'; glagToLat['Ⱅ'] = 'Ts'; glagToLat['Ⱆ'] = 'Ch';
-        glagToLat['Ⱇ'] = 'Sh'; glagToLat['Ⱈ'] = 'Sch'; glagToLat['Ⱉ'] = "'";
-        glagToLat['Ⱊ'] = "'"; glagToLat['Ⱌ'] = 'Yu'; glagToLat['Ⱍ'] = 'Ya';
-        glagToLat['Ⱎ'] = 'Ě';
-
-        // Merge extended Glagolitic (U+2C21–U+2C5F) into reverse maps
+        // Merge extended Glagolitic (U+2C21–U+2C5F) into reverse map
         Object.assign(glagToRu, extendedGlagToRu);
-        Object.assign(glagToLat, extendedGlagToLat);
 
         // === DETECT LANGUAGE ===
         const GLAGOLITIC_RANGE = /^[\u2C00-\u2C5F]+$/;
@@ -423,46 +390,91 @@
         const LATIN_RANGE    = /[a-zA-Z]/;
 
         function detectLang(text) {
-            // Count characters in each range
             let glagCount = 0, cyrCount = 0, latCount = 0;
             for (const ch of text) {
                 if (GLAGOLITIC_RANGE.test(ch)) glagCount++;
                 else if (CYRILLIC_RANGE.test(ch)) cyrCount++;
                 else if (LATIN_RANGE.test(ch)) latCount++;
             }
-
             if (glagCount > cyrCount && glagCount > latCount) return 'glagolitic';
             if (cyrCount > latCount) return 'russian';
             return 'english';
         }
 
-        // === PUNCTUATION PASS-THROUGH ===
-        const PASS_CHARS = new Set(' .,!?-;:()[]"\'/\n\t@#$%^&*+=<>{}|~`0123456789');
+        // === PHONETIC ENGLISH → RUSSIAN TRANSLITERATION ===
+        // Handles digraphs (sh, ch, th, etc.) before single characters
+        const EN_RU_DIGRAPHS = {
+            'sch': 'шч', 'ght': '', 'dge': 'дж',
+            'sh': 'ш', 'ch': 'ч', 'th': 'т', 'ph': 'ф', 'zh': 'ж',
+            'ts': 'ц', 'ng': 'нг', 'dg': 'дг', 'sk': 'ск', 'st': 'ст',
+            'wr': 'р', 'kn': 'н',
+            'ou': 'ау', 'ea': 'и', 'oo': 'у', 'ie': 'и',
+            'ai': 'ай', 'au': 'ау', 'ei': 'ай', 'oi': 'ой',
+            'yu': 'ю', 'ya': 'я', 'yo': 'ё',
+        };
+        const enRuRegex = new RegExp(
+            Object.keys(EN_RU_DIGRAPHS).map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'),
+            'gi'
+        );
 
-        // === TRANSLATE FUNCTIONS ===
+        const enRuChars = {
+            'a': 'а', 'b': 'б', 'c': 'к', 'd': 'д', 'e': 'е',
+            'f': 'ф', 'g': 'г', 'h': 'х', 'i': 'и', 'j': 'й',
+            'k': 'к', 'l': 'л', 'm': 'м', 'n': 'н', 'o': 'о',
+            'p': 'п', 'q': 'к', 'r': 'р', 's': 'с', 't': 'т',
+            'u': 'у', 'v': 'в', 'w': 'в', 'x': 'кс', 'y': 'и',
+            'z': 'з',
+        };
+
+        function englishToRussian(text) {
+            return text.toLowerCase()
+                .replace(enRuRegex, m => EN_RU_DIGRAPHS[m.toLowerCase()] || m)
+                .split('').map(ch => enRuChars[ch] || ch).join('');
+        }
+
+        // === RUSSIAN → LATIN (reverse transliteration, digraph-aware) ===
+        const ruLatDigraphs = {
+            'ж': 'zh', 'ч': 'ch', 'ш': 'sh', 'щ': 'sch',
+            'ц': 'ts', 'х': 'kh', 'е': 'e', 'ё': 'yo',
+            'ю': 'yu', 'я': 'ya', 'ъ': "'", 'ь': '', 'ы': 'y',
+            'э': 'e', 'ѣ': 'ě',
+        };
+        const ruLatRegex = new RegExp('[' + Object.keys(ruLatDigraphs).join('') + ']', 'g');
+
+        const ruLatChars = {
+            'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd',
+            'з': 'z', 'и': 'i', 'й': 'j', 'к': 'k', 'л': 'l',
+            'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r',
+            'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'ь': '',
+        };
+
+        function russianToLatin(text) {
+            return text.toLowerCase()
+                .replace(ruLatRegex, m => ruLatDigraphs[m] || m)
+                .split('').map(ch => ruLatChars[ch] || ch).join('');
+        }
+
+        // === TRANSLATE FUNCTIONS (compose through Russian hub) ===
         function toGlagolitic(text, fromLang) {
-            const map = fromLang === 'russian' ? ruToGlag : latToGlag;
-            return translate(text, map);
+            if (fromLang === 'russian') return charMap(text, ruToGlag);
+            if (fromLang === 'english') return charMap(englishToRussian(text), ruToGlag);
+            return text;
         }
 
         function toCyrillic(text, fromLang) {
-            if (fromLang === 'glagolitic') return translate(text, glagToRu);
-            if (fromLang === 'english') return translate(text, latToCyr);
-            return text; // already cyrillic
+            if (fromLang === 'glagolitic') return charMap(text, glagToRu);
+            if (fromLang === 'english') return englishToRussian(text);
+            return text;
         }
 
         function toLatin(text, fromLang) {
-            if (fromLang === 'glagolitic') return translate(text, glagToLat);
-            if (fromLang === 'russian') return translate(text, ruToLatin);
-            return text; // already latin
+            if (fromLang === 'glagolitic') return russianToLatin(charMap(text, glagToRu));
+            if (fromLang === 'russian') return russianToLatin(text);
+            return text.toLowerCase();
         }
 
-        function translate(text, map) {
-            let result = '';
-            for (const ch of text) {
-                result += map[ch] !== undefined ? map[ch] : (PASS_CHARS.has(ch) ? ch : ch);
-            }
-            return result;
+        function charMap(text, map) {
+            return text.split('').map(ch => map[ch] !== undefined ? map[ch] : ch).join('');
         }
 
         // === UI ===
