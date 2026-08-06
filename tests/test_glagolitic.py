@@ -273,9 +273,11 @@ class TestLanguageDetection:
 class TestEnglishRoundTrip:
     """English → Glagolitic → English round-trip consistency.
 
-    Note: The Glagolitic alphabet has fewer characters than the English alphabet,
-    so some round-trips are inherently lossy (many-to-one mappings).
-    For example, both 'y' and 'i' map to the same Glagolitic character 'Ⰷ'.
+    Note: The current `latToGlag` mapping uses only 23 unique Glagolitic characters
+    for 52 Latin letters (A-Z, a-z), creating many-to-one mappings.
+    For example, both 'i' and 'y' map to the same Glagolitic character 'Ⰷ'.
+    This is a limitation of the current mapping design, not the Glagolitic alphabet itself
+    (which has 96 Unicode characters available in U+2C00–U+2C5F).
     """
 
     ENGLISH_PASSES = [
